@@ -1,0 +1,903 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin - จัดการข้อมูล HR</title>
+    
+    <!-- Bootstrap 5 CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Prompt:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <!-- DataTables -->
+    <link href="https://cdn.datatables.net/1.13.4/css/dataTables.bootstrap5.min.css" rel="stylesheet">
+    <link href="https://cdn.datatables.net/responsive/2.4.1/css/responsive.bootstrap5.min.css" rel="stylesheet">
+    <!-- SweetAlert2 -->
+    <link href="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.css" rel="stylesheet">
+    
+    <style>
+        :root {
+            --primary-color: #4361ee;
+            --secondary-color: #3f37c9;
+            --success-color: #4cc9f0;
+            --danger-color: #f72585;
+            --warning-color: #f8961e;
+            --dark-color: #1e1e2f;
+            --light-color: #f8f9fa;
+        }
+
+        body {
+            font-family: 'Prompt', sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding-top: 80px;
+            padding-bottom: 60px;
+        }
+
+        /* Navbar */
+        .navbar {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            box-shadow: 0 2px 20px rgba(0,0,0,0.1);
+        }
+
+        .navbar-brand {
+            font-weight: 700;
+            font-size: 24px;
+            color: var(--dark-color) !important;
+        }
+
+        .navbar-brand span {
+            background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+            -webkit-background-clip: text;
+            background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .user-info {
+            background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+            color: white;
+            padding: 8px 20px;
+            border-radius: 50px;
+            font-size: 14px;
+        }
+
+        .user-info i {
+            margin-right: 8px;
+        }
+
+        .btn-logout {
+            background: linear-gradient(135deg, var(--danger-color), #b5179e);
+            color: white;
+            border: none;
+            padding: 8px 20px;
+            border-radius: 50px;
+            transition: transform 0.3s;
+        }
+
+        .btn-logout:hover {
+            transform: translateY(-2px);
+        }
+
+        /* Header */
+        .page-header {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            border-radius: 20px;
+            padding: 30px;
+            margin-bottom: 30px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+        }
+
+        .page-header h1 {
+            font-weight: 700;
+            color: var(--dark-color);
+            margin-bottom: 10px;
+        }
+
+        .btn-add {
+            background: linear-gradient(135deg, var(--success-color), var(--primary-color));
+            color: white;
+            border: none;
+            padding: 12px 30px;
+            border-radius: 10px;
+            font-weight: 500;
+            transition: transform 0.3s;
+        }
+
+        .btn-add:hover {
+            transform: translateY(-2px);
+        }
+
+        /* Main Content */
+        .main-content {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            border-radius: 20px;
+            padding: 30px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+        }
+
+        /* Tabs */
+        .nav-tabs {
+            border: none;
+            margin-bottom: 30px;
+        }
+
+        .nav-tabs .nav-link {
+            border: none;
+            color: var(--dark-color);
+            font-weight: 500;
+            padding: 12px 25px;
+            border-radius: 10px;
+            margin-right: 10px;
+            transition: all 0.3s;
+        }
+
+        .nav-tabs .nav-link i {
+            margin-right: 8px;
+        }
+
+        .nav-tabs .nav-link.active {
+            background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+            color: white;
+        }
+
+        /* Table */
+        .table-container {
+            background: white;
+            border-radius: 15px;
+            padding: 20px;
+            box-shadow: 0 5px 20px rgba(0,0,0,0.05);
+        }
+
+        .table thead th {
+            background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+            color: white;
+            font-weight: 500;
+            border: none;
+            padding: 15px;
+        }
+
+        .table tbody td {
+            padding: 15px;
+            vertical-align: middle;
+        }
+
+        .btn-edit {
+            background: linear-gradient(135deg, #ffd166, #f8961e);
+            color: white;
+            border: none;
+            padding: 8px 15px;
+            border-radius: 8px;
+            margin-right: 5px;
+            transition: transform 0.3s;
+        }
+
+        .btn-edit:hover {
+            transform: scale(1.05);
+        }
+
+        .btn-delete {
+            background: linear-gradient(135deg, var(--danger-color), #b5179e);
+            color: white;
+            border: none;
+            padding: 8px 15px;
+            border-radius: 8px;
+            transition: transform 0.3s;
+        }
+
+        .btn-delete:hover {
+            transform: scale(1.05);
+        }
+
+        /* Modal */
+        .modal-content {
+            border-radius: 20px;
+            border: none;
+        }
+
+        .modal-header {
+            background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+            color: white;
+            border: none;
+            border-radius: 20px 20px 0 0;
+            padding: 20px;
+        }
+
+        .modal-header .btn-close {
+            filter: brightness(0) invert(1);
+        }
+
+        .modal-body {
+            padding: 30px;
+        }
+
+        .modal-footer {
+            border: none;
+            padding: 20px;
+        }
+
+        .form-label {
+            font-weight: 500;
+            color: var(--dark-color);
+            margin-bottom: 5px;
+        }
+
+        .form-control, .form-select {
+            border: 2px solid #e0e0e0;
+            border-radius: 10px;
+            padding: 10px 15px;
+            transition: all 0.3s;
+        }
+
+        .form-control:focus, .form-select:focus {
+            border-color: var(--primary-color);
+            box-shadow: 0 0 0 0.2rem rgba(67,97,238,0.1);
+        }
+
+        .btn-save {
+            background: linear-gradient(135deg, var(--success-color), var(--primary-color));
+            color: white;
+            border: none;
+            padding: 10px 30px;
+            border-radius: 10px;
+        }
+
+        .btn-cancel {
+            background: linear-gradient(135deg, #6c757d, #495057);
+            color: white;
+            border: none;
+            padding: 10px 30px;
+            border-radius: 10px;
+        }
+
+        /* Footer */
+        .footer {
+            color: white;
+            text-align: center;
+            margin-top: 30px;
+            font-size: 14px;
+            opacity: 0.9;
+        }
+
+        /* Loading */
+        .loading-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(255,255,255,0.9);
+            display: none;
+            justify-content: center;
+            align-items: center;
+            z-index: 9999;
+        }
+
+        .loading-spinner {
+            text-align: center;
+        }
+
+        .spinner {
+            width: 50px;
+            height: 50px;
+            border: 5px solid #f3f3f3;
+            border-top: 5px solid var(--primary-color);
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            margin: 0 auto 20px;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .page-header h1 {
+                font-size: 24px;
+            }
+            
+            .btn-add {
+                width: 100%;
+                margin-top: 15px;
+            }
+            
+            .nav-tabs .nav-link {
+                padding: 8px 15px;
+                font-size: 12px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Loading Overlay -->
+    <div class="loading-overlay" id="loadingOverlay">
+        <div class="loading-spinner">
+            <div class="spinner"></div>
+            <p>กำลังโหลด...</p>
+        </div>
+    </div>
+
+    <!-- Navbar -->
+    <nav class="navbar navbar-expand-lg fixed-top">
+        <div class="container">
+            <a class="navbar-brand" href="#">
+                <i class="fas fa-crown me-2"></i>
+                <span>Admin</span> Panel
+            </a>
+            <div class="ms-auto d-flex align-items-center">
+                <div class="user-info me-3" id="userInfo">
+                    <i class="fas fa-user-circle"></i>
+                    <span id="userEmail">กำลังโหลด...</span>
+                </div>
+                <button class="btn-logout" onclick="logout()">
+                    <i class="fas fa-sign-out-alt me-2"></i>ออกจากระบบ
+                </button>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Main Content -->
+    <div class="container">
+        <!-- Page Header -->
+        <div class="page-header">
+            <div class="row align-items-center">
+                <div class="col-md-6">
+                    <h1><i class="fas fa-cog me-3"></i>จัดการข้อมูลรับสมัครงาน</h1>
+                    <p class="text-muted mb-0">เพิ่ม แก้ไข ลบ ข้อมูลประกาศรับสมัครงาน</p>
+                </div>
+                <div class="col-md-6 text-md-end">
+                    <button class="btn-add" onclick="showAddModal()">
+                        <i class="fas fa-plus-circle me-2"></i>เพิ่มข้อมูลใหม่
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Main Content -->
+        <div class="main-content">
+            <!-- Tabs -->
+            <ul class="nav nav-tabs" id="jobTabs" role="tablist">
+                <li class="nav-item" role="presentation">
+                    <button class="nav-link active" id="daily-tab" data-bs-toggle="tab" data-bs-target="#daily" type="button">
+                        <i class="fas fa-sun"></i> พนักงานรายวัน
+                    </button>
+                </li>
+                <li class="nav-item" role="presentation">
+                    <button class="nav-link" id="monthly-tab" data-bs-toggle="tab" data-bs-target="#monthly" type="button">
+                        <i class="fas fa-calendar-alt"></i> พนักงานรายเดือน
+                    </button>
+                </li>
+                <li class="nav-item" role="presentation">
+                    <button class="nav-link" id="disabled-tab" data-bs-toggle="tab" data-bs-target="#disabled" type="button">
+                        <i class="fas fa-wheelchair"></i> พนักงานรายวัน (คนพิการ)
+                    </button>
+                </li>
+            </ul>
+
+            <!-- Tab Content -->
+            <div class="tab-content" id="jobTabsContent">
+                <!-- Daily Jobs -->
+                <div class="tab-pane fade show active" id="daily" role="tabpanel">
+                    <div class="table-container">
+                        <table id="dailyTable" class="table table-hover responsive nowrap" style="width:100%">
+                            <thead>
+                                <tr>
+                                    <th>ผู้ลงประกาศ</th>
+                                    <th>ตำแหน่ง</th>
+                                    <th>แผนก</th>
+                                    <th>อายุ</th>
+                                    <th>วุฒิ</th>
+                                    <th>สถานะ</th>
+                                    <th>จำนวน</th>
+                                    <th>วันที่</th>
+                                    <th>จัดการ</th>
+                                </tr>
+                            </thead>
+                            <tbody></tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <!-- Monthly Jobs -->
+                <div class="tab-pane fade" id="monthly" role="tabpanel">
+                    <div class="table-container">
+                        <table id="monthlyTable" class="table table-hover responsive nowrap" style="width:100%">
+                            <thead>
+                                <tr>
+                                    <th>ผู้ลงประกาศ</th>
+                                    <th>ตำแหน่ง</th>
+                                    <th>แผนก</th>
+                                    <th>อายุ</th>
+                                    <th>วุฒิ</th>
+                                    <th>สถานะ</th>
+                                    <th>จำนวน</th>
+                                    <th>วันที่</th>
+                                    <th>จัดการ</th>
+                                </tr>
+                            </thead>
+                            <tbody></tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <!-- Disabled Jobs -->
+                <div class="tab-pane fade" id="disabled" role="tabpanel">
+                    <div class="table-container">
+                        <table id="disabledTable" class="table table-hover responsive nowrap" style="width:100%">
+                            <thead>
+                                <tr>
+                                    <th>ผู้ลงประกาศ</th>
+                                    <th>ตำแหน่ง</th>
+                                    <th>แผนก</th>
+                                    <th>อายุ</th>
+                                    <th>วุฒิ</th>
+                                    <th>สถานะ</th>
+                                    <th>จำนวน</th>
+                                    <th>วันที่</th>
+                                    <th>จัดการ</th>
+                                </tr>
+                            </thead>
+                            <tbody></tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Add/Edit Modal -->
+    <div class="modal fade" id="jobModal" tabindex="-1">
+        <div class="modal-dialog modal-lg modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="modalTitle">
+                        <i class="fas fa-plus-circle me-2"></i>เพิ่มข้อมูลใหม่
+                    </h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <form id="jobForm">
+                        <input type="hidden" id="jobId">
+                        
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <label class="form-label">ผู้ลงประกาศ</label>
+                                <input type="text" class="form-control" id="namepost" list="posterList" required>
+                                <datalist id="posterList">
+                                    <option value="กันทิมา สินธุผัด">
+                                    <option value="ปวีณา เหมืองจา">
+                                </datalist>
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <label class="form-label">ตำแหน่งงาน</label>
+                                <input type="text" class="form-control" id="position" required>
+                            </div>
+                        </div>
+
+                        <div class="row">
+                            <div class="col-md-4 mb-3">
+                                <label class="form-label">แผนก</label>
+                                <select class="form-select" id="department" required>
+                                    <option value="">เลือกแผนก</option>
+                                    <option value="จัดซื้อ">จัดซื้อ</option>
+                                    <option value="บุคคลธุการ">บุคคลธุการ</option>
+                                    <option value="บัญชี">บัญชี</option>
+                                    <option value="สิ่งแวดล้อม">สิ่งแวดล้อม</option>
+                                    <option value="ห้องLAB">ห้องLAB</option>
+                                    <option value="จป">จป</option>
+                                    <option value="สโตร์และรับสินค้า">สโตร์และรับสินค้า</option>
+                                    <option value="ช่าง">ช่าง</option>
+                                    <option value="ผลิต">ผลิต</option>
+                                    <option value="คิวซี">คิวซี</option>
+                                    <option value="แพ็คกิ้ง">แพ็คกิ้ง</option>
+                                    <option value="ไอที">ไอที</option>
+                                    <option value="DC">DC</option>
+                                    <option value="รับวัตถุดิบ">รับวัตถุดิบ</option>
+                                    <option value="ผู้บริหาร">ผู้บริหาร</option>
+                                    <option value="ส่งเสริมการเกษตร">ส่งเสริมการเกษตร</option>
+                                    <option value="R&D">R&D</option>
+                                    <option value="ตามลักษณะการพิการ">ตามลักษณะการพิการ</option>
+                                </select>
+                            </div>
+                            <div class="col-md-4 mb-3">
+                                <label class="form-label">อายุ</label>
+                                <input type="text" class="form-control" id="age" placeholder="เช่น 20-35 ปี" required>
+                            </div>
+                            <div class="col-md-4 mb-3">
+                                <label class="form-label">ส่วนสูง</label>
+                                <select class="form-select" id="height" required>
+                                    <option value="">เลือกส่วนสูง</option>
+                                    <option value="150 ซม.ขึ้นไป">150 ซม.ขึ้นไป</option>
+                                    <option value="155 ซม.ขึ้นไป">155 ซม.ขึ้นไป</option>
+                                    <option value="160 ซม.ขึ้นไป">160 ซม.ขึ้นไป</option>
+                                    <option value="165 ซม.ขึ้นไป">165 ซม.ขึ้นไป</option>
+                                </select>
+                            </div>
+                        </div>
+
+                        <div class="row">
+                            <div class="col-md-4 mb-3">
+                                <label class="form-label">วุฒิการศึกษา</label>
+                                <select class="form-select" id="educational" required>
+                                    <option value="">เลือกวุฒิ</option>
+                                    <option value="ป.4 ขึ้นไป">ป.4 ขึ้นไป</option>
+                                    <option value="ป.6 ขึ้นไป">ป.6 ขึ้นไป</option>
+                                    <option value="ม.3 ขึ้นไป">ม.3 ขึ้นไป</option>
+                                    <option value="ม.6/ปวช ขึ้นไป">ม.6/ปวช ขึ้นไป</option>
+                                    <option value="ปวส ขึ้นไป">ปวส ขึ้นไป</option>
+                                    <option value="ปริญญาตรี ขึ้นไป">ปริญญาตรี ขึ้นไป</option>
+                                    <option value="ปริญญาโท ขึ้นไป">ปริญญาโท ขึ้นไป</option>
+                                    <option value="ปริญญาเอก ขึ้นไป">ปริญญาเอก ขึ้นไป</option>
+                                </select>
+                            </div>
+                            <div class="col-md-4 mb-3">
+                                <label class="form-label">สถานะ</label>
+                                <select class="form-select" id="status" required>
+                                    <option value="">เลือกสถานะ</option>
+                                    <option value="เปิดรับสมัคร">เปิดรับสมัคร</option>
+                                    <option value="เปิดรับสมัคร ด่วน!!!">เปิดรับสมัคร ด่วน!!!</option>
+                                    <option value="ปิดรับสมัคร">ปิดรับสมัคร</option>
+                                </select>
+                            </div>
+                            <div class="col-md-4 mb-3">
+                                <label class="form-label">ประเภท</label>
+                                <select class="form-select" id="type" required>
+                                    <option value="">เลือกประเภท</option>
+                                    <option value="รายวัน">รายวัน</option>
+                                    <option value="รายเดือน">รายเดือน</option>
+                                    <option value="รายวัน-คนพิการ">รายวัน-คนพิการ</option>
+                                </select>
+                            </div>
+                        </div>
+
+                        <div class="row">
+                            <div class="col-md-4 mb-3">
+                                <label class="form-label">จำนวนอัตรา</label>
+                                <input type="number" class="form-control" id="total" required>
+                            </div>
+                        </div>
+
+                        <div class="mb-3">
+                            <label class="form-label">คุณสมบัติ</label>
+                            <textarea class="form-control" id="feature" rows="3"></textarea>
+                        </div>
+
+                        <div class="mb-3">
+                            <label class="form-label">ลักษณะงาน</label>
+                            <textarea class="form-control" id="other" rows="3"></textarea>
+                        </div>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn-cancel" data-bs-dismiss="modal">
+                        <i class="fas fa-times me-2"></i>ยกเลิก
+                    </button>
+                    <button type="button" class="btn-save" onclick="saveJob()">
+                        <i class="fas fa-save me-2"></i>บันทึก
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <div class="footer">
+        <p><i class="far fa-copyright me-1"></i>จัดทำโดย นาย ภาคภูมิ เรือนมูล HrSupport</p>
+    </div>
+
+    <!-- Scripts -->
+<script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
+<script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-auth.js"></script>
+<script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-database.js"></script>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdn.datatables.net/1.13.4/js/jquery.dataTables.min.js"></script>
+    <script src="https://cdn.datatables.net/1.13.4/js/dataTables.bootstrap5.min.js"></script>
+    <script src="https://cdn.datatables.net/responsive/2.4.1/js/dataTables.responsive.min.js"></script>
+    <script src="https://cdn.datatables.net/responsive/2.4.1/js/responsive.bootstrap5.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
+    <script>
+        // Firebase Configuration
+   // Firebase Configuration
+    const firebaseConfig = {
+        apiKey: "AIzaSyD4VAhT9Bp7-_P0s4UOQlJMEK1bxn2770w",
+        authDomain: "bookcarcm.firebaseapp.com",
+        databaseURL: "https://bookcarcm-default-rtdb.asia-southeast1.firebasedatabase.app",
+        projectId: "bookcarcm",
+        storageBucket: "bookcarcm.firebasestorage.app",
+        messagingSenderId: "540662345211",
+        appId: "1:540662345211:web:0e4dbf2ee2516a267c6f5e",
+        measurementId: "G-V748ZCZZP5"
+    };
+
+    // Initialize Firebase
+    firebase.initializeApp(firebaseConfig);
+    const auth = firebase.auth();
+    const database = firebase.database();
+
+    // Check authentication
+    auth.onAuthStateChanged(user => {
+        if (!user) {
+            window.location.href = 'login.html';
+        } else {
+            document.getElementById('userEmail').textContent = user.email;
+            loadData();
+        }
+    });
+
+        // Logout function
+        window.logout = function() {
+            Swal.fire({
+                title: 'ต้องการออกจากระบบ?',
+                text: 'คุณจะถูกนำกลับไปยังหน้าเข้าสู่ระบบ',
+                icon: 'question',
+                showCancelButton: true,
+                confirmButtonColor: '#4361ee',
+                cancelButtonColor: '#f72585',
+                confirmButtonText: 'ใช่, ออกจากระบบ',
+                cancelButtonText: 'ยกเลิก'
+            }).then(result => {
+                if (result.isConfirmed) {
+                    auth.signOut();
+                }
+            });
+        };
+
+        // Show loading
+        function showLoading() {
+            document.getElementById('loadingOverlay').style.display = 'flex';
+        }
+
+        // Hide loading
+        function hideLoading() {
+            document.getElementById('loadingOverlay').style.display = 'none';
+        }
+
+        // Format date
+        function formatDate(timestamp) {
+            if (!timestamp) return '-';
+            const date = new Date(timestamp);
+            const day = String(date.getDate()).padStart(2, '0');
+            const month = String(date.getMonth() + 1).padStart(2, '0');
+            const year = date.getFullYear() + 543;
+            const hours = String(date.getHours()).padStart(2, '0');
+            const minutes = String(date.getMinutes()).padStart(2, '0');
+            return `${day}/${month}/${year} ${hours}:${minutes}`;
+        }
+
+        // Get status badge
+        function getStatusBadge(status) {
+            if (status === 'เปิดรับสมัคร ด่วน!!!') {
+                return '<span class="badge bg-danger"><i class="fas fa-exclamation-circle me-1"></i>ด่วน!!!</span>';
+            } else if (status === 'เปิดรับสมัคร') {
+                return '<span class="badge bg-success"><i class="fas fa-check-circle me-1"></i>เปิดรับสมัคร</span>';
+            } else {
+                return '<span class="badge bg-secondary"><i class="fas fa-times-circle me-1"></i>ปิดรับสมัคร</span>';
+            }
+        }
+
+        // Load data
+        function loadData() {
+            showLoading();
+            
+            database.ref('jobs').once('value', snapshot => {
+                const jobs = [];
+                snapshot.forEach(childSnapshot => {
+                    jobs.push({
+                        id: childSnapshot.key,
+                        ...childSnapshot.val()
+                    });
+                });
+
+                const dailyJobs = jobs.filter(job => job.ตำแหน่ง === 'รายวัน');
+                const monthlyJobs = jobs.filter(job => job.ตำแหน่ง === 'รายเดือน');
+                const disabledJobs = jobs.filter(job => job.ตำแหน่ง === 'รายวัน-คนพิการ');
+
+                const sortByDate = (a, b) => (b.วันที่และเวลาที่ลงประกาศ || 0) - (a.วันที่และเวลาที่ลงประกาศ || 0);
+                
+                renderTable('dailyTable', dailyJobs.sort(sortByDate));
+                renderTable('monthlyTable', monthlyJobs.sort(sortByDate));
+                renderTable('disabledTable', disabledJobs.sort(sortByDate));
+
+                hideLoading();
+            });
+        }
+
+        // Render table
+        function renderTable(tableId, data) {
+            if ($.fn.DataTable.isDataTable(`#${tableId}`)) {
+                $(`#${tableId}`).DataTable().destroy();
+            }
+
+            const table = $(`#${tableId}`).DataTable({
+                data: data,
+                columns: [
+                    { data: 'ผู้ลงประกาศ' },
+                    { data: 'ตำแหน่งงาน' },
+                    { data: 'แผนก' },
+                    { data: 'อายุ' },
+                    { data: 'วุฒิการศึกษา' },
+                    {
+                        data: 'สถานะ',
+                        render: data => getStatusBadge(data)
+                    },
+                    { data: 'จำนวน' },
+                    {
+                        data: 'วันที่และเวลาที่ลงประกาศ',
+                        render: data => formatDate(data)
+                    },
+                    {
+                        data: null,
+                        render: data => `
+                            <div>
+                                <button class="btn-edit" onclick='editJob(${JSON.stringify(data)})'>
+                                    <i class="fas fa-edit"></i>
+                                </button>
+                                <button class="btn-delete" onclick="deleteJob('${data.id}')">
+                                    <i class="fas fa-trash"></i>
+                                </button>
+                            </div>
+                        `
+                    }
+                ],
+                responsive: true,
+                language: {
+                    url: '//cdn.datatables.net/plug-ins/1.13.4/i18n/th.json'
+                },
+                order: [[7, 'desc']],
+                pageLength: 10
+            });
+        }
+
+        // Show add modal
+        window.showAddModal = function() {
+            document.getElementById('modalTitle').innerHTML = '<i class="fas fa-plus-circle me-2"></i>เพิ่มข้อมูลใหม่';
+            document.getElementById('jobForm').reset();
+            document.getElementById('jobId').value = '';
+            new bootstrap.Modal(document.getElementById('jobModal')).show();
+        };
+
+        // Edit job
+        window.editJob = function(job) {
+            document.getElementById('modalTitle').innerHTML = '<i class="fas fa-edit me-2"></i>แก้ไขข้อมูล';
+            
+            document.getElementById('jobId').value = job.id || '';
+            document.getElementById('namepost').value = job.ผู้ลงประกาศ || '';
+            document.getElementById('position').value = job.ตำแหน่งงาน || '';
+            document.getElementById('department').value = job.แผนก || '';
+            document.getElementById('age').value = job.อายุ || '';
+            document.getElementById('height').value = job.ส่วนสูง || '';
+            document.getElementById('educational').value = job.วุฒิการศึกษา || '';
+            document.getElementById('status').value = job.สถานะ || '';
+            document.getElementById('type').value = job.ตำแหน่ง || '';
+            document.getElementById('total').value = job.จำนวน || '';
+            document.getElementById('feature').value = job.คุณสมบัติ || '';
+            document.getElementById('other').value = job.อื่นๆ || '';
+            
+            new bootstrap.Modal(document.getElementById('jobModal')).show();
+        };
+
+        // Save job
+        window.saveJob = function() {
+            const form = document.getElementById('jobForm');
+            if (!form.checkValidity()) {
+                form.reportValidity();
+                return;
+            }
+
+            showLoading();
+
+            const jobData = {
+                ผู้ลงประกาศ: document.getElementById('namepost').value,
+                ตำแหน่งงาน: document.getElementById('position').value,
+                แผนก: document.getElementById('department').value,
+                อายุ: document.getElementById('age').value,
+                ส่วนสูง: document.getElementById('height').value,
+                วุฒิการศึกษา: document.getElementById('educational').value,
+                คุณสมบัติ: document.getElementById('feature').value,
+                อื่นๆ: document.getElementById('other').value,
+                สถานะ: document.getElementById('status').value,
+                ตำแหน่ง: document.getElementById('type').value,
+                จำนวน: document.getElementById('total').value,
+                วันที่และเวลาที่ลงประกาศ: Date.now()
+            };
+
+            const jobId = document.getElementById('jobId').value;
+
+            if (jobId) {
+                // Update existing job
+                database.ref(`jobs/${jobId}`).update(jobData)
+                    .then(() => {
+                        Swal.fire({
+                            icon: 'success',
+                            title: 'บันทึกข้อมูลสำเร็จ',
+                            showConfirmButton: false,
+                            timer: 1500
+                        });
+                        bootstrap.Modal.getInstance(document.getElementById('jobModal')).hide();
+                        loadData();
+                    })
+                    .catch(error => {
+                        Swal.fire({
+                            icon: 'error',
+                            title: 'เกิดข้อผิดพลาด',
+                            text: error.message
+                        });
+                    })
+                    .finally(() => {
+                        hideLoading();
+                    });
+            } else {
+                // Add new job
+                database.ref('jobs').push(jobData)
+                    .then(() => {
+                        Swal.fire({
+                            icon: 'success',
+                            title: 'เพิ่มข้อมูลสำเร็จ',
+                            showConfirmButton: false,
+                            timer: 1500
+                        });
+                        bootstrap.Modal.getInstance(document.getElementById('jobModal')).hide();
+                        loadData();
+                    })
+                    .catch(error => {
+                        Swal.fire({
+                            icon: 'error',
+                            title: 'เกิดข้อผิดพลาด',
+                            text: error.message
+                        });
+                    })
+                    .finally(() => {
+                        hideLoading();
+                    });
+            }
+        };
+
+        // Delete job
+        window.deleteJob = function(jobId) {
+            Swal.fire({
+                title: 'ยืนยันการลบข้อมูล',
+                text: 'คุณแน่ใจหรือไม่ที่จะลบข้อมูลนี้? การกระทำนี้ไม่สามารถเรียกคืนได้',
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonColor: '#f72585',
+                cancelButtonColor: '#6c757d',
+                confirmButtonText: 'ใช่, ลบข้อมูล',
+                cancelButtonText: 'ยกเลิก'
+            }).then(result => {
+                if (result.isConfirmed) {
+                    showLoading();
+                    
+                    database.ref(`jobs/${jobId}`).remove()
+                        .then(() => {
+                            Swal.fire({
+                                icon: 'success',
+                                title: 'ลบข้อมูลสำเร็จ',
+                                showConfirmButton: false,
+                                timer: 1500
+                            });
+                            loadData();
+                        })
+                        .catch(error => {
+                            Swal.fire({
+                                icon: 'error',
+                                title: 'เกิดข้อผิดพลาด',
+                                text: error.message
+                            });
+                        })
+                        .finally(() => {
+                            hideLoading();
+                        });
+                }
+            });
+        };
+    </script>
+</body>
+</html>
