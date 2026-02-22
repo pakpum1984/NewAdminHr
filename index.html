@@ -1,0 +1,638 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>HR Support - ประกาศรับสมัครงาน</title>
+    
+    <!-- Bootstrap 5 CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Prompt:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <!-- DataTables -->
+    <link href="https://cdn.datatables.net/1.13.4/css/dataTables.bootstrap5.min.css" rel="stylesheet">
+    <link href="https://cdn.datatables.net/responsive/2.4.1/css/responsive.bootstrap5.min.css" rel="stylesheet">
+    <!-- AOS Animation -->
+    <link href="https://unpkg.com/aos@2.3.1/dist/aos.css" rel="stylesheet">
+    
+    <style>
+        :root {
+            --primary-color: #4361ee;
+            --secondary-color: #3f37c9;
+            --success-color: #4cc9f0;
+            --danger-color: #f72585;
+            --warning-color: #f8961e;
+            --dark-color: #1e1e2f;
+            --light-color: #f8f9fa;
+        }
+
+        body {
+            font-family: 'Prompt', sans-serif;
+            background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+            min-height: 100vh;
+            padding-top: 80px;
+            padding-bottom: 60px;
+        }
+
+        /* Navbar */
+        .navbar {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            box-shadow: 0 2px 20px rgba(0,0,0,0.1);
+            padding: 15px 0;
+        }
+
+        .navbar-brand {
+            font-weight: 700;
+            font-size: 24px;
+            color: var(--dark-color) !important;
+        }
+
+        .navbar-brand span {
+            background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .nav-link {
+            font-weight: 500;
+            color: var(--dark-color) !important;
+            margin: 0 10px;
+            transition: color 0.3s;
+        }
+
+        .nav-link:hover {
+            color: var(--primary-color) !important;
+        }
+
+        .btn-login {
+            background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+            color: white !important;
+            padding: 10px 25px;
+            border-radius: 50px;
+            border: none;
+            transition: transform 0.3s, box-shadow 0.3s;
+        }
+
+        .btn-login:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 20px rgba(67, 97, 238, 0.3);
+        }
+
+        /* Header Section */
+        .page-header {
+            background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+            color: white;
+            padding: 40px 0;
+            margin-bottom: 40px;
+            border-radius: 0 0 50px 50px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+        }
+
+        .page-header h1 {
+            font-weight: 700;
+            font-size: 36px;
+            margin-bottom: 10px;
+        }
+
+        .page-header p {
+            font-size: 18px;
+            opacity: 0.9;
+        }
+
+        /* Cards */
+        .job-card {
+            background: white;
+            border-radius: 20px;
+            padding: 20px;
+            margin-bottom: 30px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.05);
+            transition: transform 0.3s, box-shadow 0.3s;
+        }
+
+        .job-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 15px 40px rgba(0,0,0,0.1);
+        }
+
+        .job-card h3 {
+            font-weight: 600;
+            color: var(--dark-color);
+            margin-bottom: 20px;
+            padding-bottom: 10px;
+            border-bottom: 3px solid;
+        }
+
+        .job-card.daily h3 { border-color: var(--primary-color); }
+        .job-card.monthly h3 { border-color: var(--success-color); }
+        .job-card.disabled h3 { border-color: var(--warning-color); }
+
+        /* Table */
+        .table-container {
+            background: white;
+            border-radius: 15px;
+            padding: 20px;
+            box-shadow: 0 5px 20px rgba(0,0,0,0.05);
+        }
+
+        .table {
+            margin-bottom: 0;
+        }
+
+        .table thead th {
+            background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+            color: white;
+            font-weight: 500;
+            border: none;
+            padding: 15px;
+        }
+
+        .table tbody td {
+            padding: 15px;
+            vertical-align: middle;
+        }
+
+        .badge-status {
+            padding: 8px 15px;
+            border-radius: 50px;
+            font-weight: 500;
+        }
+
+        .badge-open {
+            background: linear-gradient(135deg, #4cc9f0, #4895ef);
+            color: white;
+        }
+
+        .badge-urgent {
+            background: linear-gradient(135deg, #f72585, #b5179e);
+            color: white;
+        }
+
+        .badge-closed {
+            background: linear-gradient(135deg, #6c757d, #495057);
+            color: white;
+        }
+
+        .view-btn {
+            background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+            color: white;
+            border: none;
+            padding: 8px 15px;
+            border-radius: 10px;
+            font-size: 14px;
+            transition: transform 0.3s;
+        }
+
+        .view-btn:hover {
+            transform: scale(1.05);
+        }
+
+        /* Footer */
+        .footer {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            padding: 20px 0;
+            margin-top: 60px;
+            box-shadow: 0 -5px 20px rgba(0,0,0,0.05);
+        }
+
+        /* Modal */
+        .modal-content {
+            border-radius: 20px;
+            border: none;
+        }
+
+        .modal-header {
+            background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+            color: white;
+            border: none;
+            border-radius: 20px 20px 0 0;
+            padding: 20px;
+        }
+
+        .modal-header .btn-close {
+            filter: brightness(0) invert(1);
+        }
+
+        .modal-body {
+            padding: 30px;
+        }
+
+        .job-detail-item {
+            margin-bottom: 20px;
+            padding: 15px;
+            background: #f8f9fa;
+            border-radius: 10px;
+        }
+
+        .job-detail-item strong {
+            color: var(--primary-color);
+            display: block;
+            margin-bottom: 5px;
+        }
+
+        .job-detail-item p {
+            margin: 0;
+            color: var(--dark-color);
+        }
+
+        /* Loading Spinner */
+        .loading-spinner {
+            text-align: center;
+            padding: 50px;
+        }
+
+        .spinner {
+            width: 50px;
+            height: 50px;
+            border: 5px solid #f3f3f3;
+            border-top: 5px solid var(--primary-color);
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            margin: 0 auto 20px;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .page-header h1 {
+                font-size: 28px;
+            }
+            
+            .table-container {
+                padding: 10px;
+            }
+            
+            .table thead th {
+                font-size: 12px;
+                padding: 10px;
+            }
+            
+            .table tbody td {
+                font-size: 12px;
+                padding: 10px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Navbar -->
+    <nav class="navbar navbar-expand-lg fixed-top">
+        <div class="container">
+            <a class="navbar-brand" href="#">
+                <i class="fas fa-briefcase me-2"></i>
+                <span>HR</span> Support
+            </a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav ms-auto">
+                    <li class="nav-item">
+                        <a class="nav-link" href="#daily"><i class="fas fa-sun me-1"></i>รายวัน</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#monthly"><i class="fas fa-calendar-alt me-1"></i>รายเดือน</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#disabled"><i class="fas fa-wheelchair me-1"></i>คนพิการ</a>
+                    </li>
+                    <li class="nav-item ms-lg-3">
+                        <a class="btn-login" href="login.html">
+                            <i class="fas fa-sign-in-alt me-2"></i>สำหรับเจ้าหน้าที่
+                        </a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Page Header -->
+    <section class="page-header" data-aos="fade-down">
+        <div class="container text-center">
+            <h1><i class="fas fa-bullhorn me-3"></i>ประกาศรับสมัครงาน</h1>
+            <p>บริษัท Cm2 จำกัด</p>
+        </div>
+    </section>
+
+    <!-- Main Content -->
+    <main class="container">
+        <!-- Loading State -->
+        <div id="loadingState" class="loading-spinner">
+            <div class="spinner"></div>
+            <p>กำลังโหลดข้อมูล...</p>
+        </div>
+
+        <!-- Content -->
+        <div id="content" style="display: none;">
+            <!-- Daily Jobs -->
+            <section id="daily" class="job-card daily" data-aos="fade-up">
+                <h3><i class="fas fa-sun me-2"></i>พนักงานรายวัน</h3>
+                <div class="table-container">
+                    <table id="dailyTable" class="table table-hover responsive nowrap" style="width:100%">
+                        <thead>
+                            <tr>
+                                <th>ตำแหน่ง</th>
+                                <th>แผนก</th>
+                                <th>อายุ</th>
+                                <th>วุฒิ</th>
+                                <th>จำนวน</th>
+                                <th>สถานะ</th>
+                                <th>วันที่</th>
+                                <th>รายละเอียด</th>
+                            </tr>
+                        </thead>
+                        <tbody></tbody>
+                    </table>
+                </div>
+            </section>
+
+            <!-- Monthly Jobs -->
+            <section id="monthly" class="job-card monthly" data-aos="fade-up" data-aos-delay="100">
+                <h3><i class="fas fa-calendar-alt me-2"></i>พนักงานรายเดือน</h3>
+                <div class="table-container">
+                    <table id="monthlyTable" class="table table-hover responsive nowrap" style="width:100%">
+                        <thead>
+                            <tr>
+                                <th>ตำแหน่ง</th>
+                                <th>แผนก</th>
+                                <th>อายุ</th>
+                                <th>วุฒิ</th>
+                                <th>จำนวน</th>
+                                <th>สถานะ</th>
+                                <th>วันที่</th>
+                                <th>รายละเอียด</th>
+                            </tr>
+                        </thead>
+                        <tbody></tbody>
+                    </table>
+                </div>
+            </section>
+
+            <!-- Disabled Person Jobs -->
+            <section id="disabled" class="job-card disabled" data-aos="fade-up" data-aos-delay="200">
+                <h3><i class="fas fa-wheelchair me-2"></i>พนักงานรายวัน (คนพิการ)</h3>
+                <div class="table-container">
+                    <table id="disabledTable" class="table table-hover responsive nowrap" style="width:100%">
+                        <thead>
+                            <tr>
+                                <th>ตำแหน่ง</th>
+                                <th>แผนก</th>
+                                <th>อายุ</th>
+                                <th>วุฒิ</th>
+                                <th>จำนวน</th>
+                                <th>สถานะ</th>
+                                <th>วันที่</th>
+                                <th>รายละเอียด</th>
+                            </tr>
+                        </thead>
+                        <tbody></tbody>
+                    </table>
+                </div>
+            </section>
+        </div>
+    </main>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="container text-center">
+            <p class="mb-0">
+                <i class="far fa-copyright me-1"></i>จัดทำโดย นาย ภาคภูมิ เรือนมูล HrSupport
+            </p>
+        </div>
+    </footer>
+
+    <!-- Detail Modal -->
+    <div class="modal fade" id="detailModal" tabindex="-1">
+        <div class="modal-dialog modal-lg modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">
+                        <i class="fas fa-info-circle me-2"></i>รายละเอียดตำแหน่งงาน
+                    </h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body" id="modalContent"></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Scripts -->
+<script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
+<script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-database.js"></script>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdn.datatables.net/1.13.4/js/jquery.dataTables.min.js"></script>
+    <script src="https://cdn.datatables.net/1.13.4/js/dataTables.bootstrap5.min.js"></script>
+    <script src="https://cdn.datatables.net/responsive/2.4.1/js/dataTables.responsive.min.js"></script>
+    <script src="https://cdn.datatables.net/responsive/2.4.1/js/responsive.bootstrap5.min.js"></script>
+    <script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
+    <script>
+        // Initialize AOS
+        AOS.init({
+            duration: 800,
+            once: true
+        });
+
+   // Firebase Configuration
+    const firebaseConfig = {
+        apiKey: "AIzaSyD4VAhT9Bp7-_P0s4UOQlJMEK1bxn2770w",
+        authDomain: "bookcarcm.firebaseapp.com",
+        databaseURL: "https://bookcarcm-default-rtdb.asia-southeast1.firebasedatabase.app",
+        projectId: "bookcarcm",
+        storageBucket: "bookcarcm.firebasestorage.app",
+        messagingSenderId: "540662345211",
+        appId: "1:540662345211:web:0e4dbf2ee2516a267c6f5e",
+        measurementId: "G-V748ZCZZP5"
+    };
+
+    // Initialize Firebase
+    firebase.initializeApp(firebaseConfig);
+    const database = firebase.database();
+
+    // Format date
+    function formatDate(timestamp) {
+        if (!timestamp) return '-';
+        const date = new Date(timestamp);
+        const day = String(date.getDate()).padStart(2, '0');
+        const month = String(date.getMonth() + 1).padStart(2, '0');
+        const year = date.getFullYear() + 543;
+        const hours = String(date.getHours()).padStart(2, '0');
+        const minutes = String(date.getMinutes()).padStart(2, '0');
+        return `${day}/${month}/${year} ${hours}:${minutes}`;
+    }
+
+    // Get status badge
+    function getStatusBadge(status) {
+        if (status === 'เปิดรับสมัคร ด่วน!!!') {
+            return '<span class="badge-status badge-urgent"><i class="fas fa-exclamation-circle me-1"></i>ด่วน!!!</span>';
+        } else if (status === 'เปิดรับสมัคร') {
+            return '<span class="badge-status badge-open"><i class="fas fa-check-circle me-1"></i>เปิดรับสมัคร</span>';
+        } else {
+            return '<span class="badge-status badge-closed"><i class="fas fa-times-circle me-1"></i>ปิดรับสมัคร</span>';
+        }
+    }
+
+    // Load data from Firebase
+    function loadData() {
+        $('#loadingState').show();
+        $('#content').hide();
+
+        database.ref('jobs').once('value', snapshot => {
+            const jobs = [];
+            snapshot.forEach(childSnapshot => {
+                jobs.push({
+                    id: childSnapshot.key,
+                    ...childSnapshot.val()
+                });
+            });
+
+            // Filter jobs by type
+            const dailyJobs = jobs.filter(job => job.ตำแหน่ง === 'รายวัน');
+            const monthlyJobs = jobs.filter(job => job.ตำแหน่ง === 'รายเดือน');
+            const disabledJobs = jobs.filter(job => job.ตำแหน่ง === 'รายวัน-คนพิการ');
+
+            // Sort by date (newest first)
+            const sortByDate = (a, b) => (b.วันที่และเวลาที่ลงประกาศ || 0) - (a.วันที่และเวลาที่ลงประกาศ || 0);
+            
+            // Render tables
+            renderTable('dailyTable', dailyJobs.sort(sortByDate));
+            renderTable('monthlyTable', monthlyJobs.sort(sortByDate));
+            renderTable('disabledTable', disabledJobs.sort(sortByDate));
+
+            $('#loadingState').hide();
+            $('#content').show();
+        });
+    }
+
+    // Render DataTable
+    function renderTable(tableId, data) {
+        if ($.fn.DataTable.isDataTable(`#${tableId}`)) {
+            $(`#${tableId}`).DataTable().destroy();
+        }
+
+        const table = $(`#${tableId}`).DataTable({
+            data: data,
+            columns: [
+                { data: 'ตำแหน่งงาน' },
+                { data: 'แผนก' },
+                { data: 'อายุ' },
+                { data: 'วุฒิการศึกษา' },
+                { data: 'จำนวน' },
+                {
+                    data: 'สถานะ',
+                    render: data => getStatusBadge(data)
+                },
+                {
+                    data: 'วันที่และเวลาที่ลงประกาศ',
+                    render: data => formatDate(data)
+                },
+                {
+                    data: null,
+                    render: data => `
+                        <button class="view-btn" onclick='showDetail(${JSON.stringify(data).replace(/'/g, "\\'")})'>
+                            <i class="fas fa-eye me-1"></i>ดูรายละเอียด
+                        </button>
+                    `
+                }
+            ],
+            responsive: true,
+            language: {
+                url: '//cdn.datatables.net/plug-ins/1.13.4/i18n/th.json'
+            },
+            order: [[6, 'desc']],
+            pageLength: 5,
+            lengthMenu: [[5, 10, 25, -1], [5, 10, 25, 'ทั้งหมด']],
+            destroy: true
+        });
+    }
+
+    // Show job details
+    window.showDetail = function(job) {
+        const modalContent = document.getElementById('modalContent');
+        modalContent.innerHTML = `
+            <div class="job-detail-item">
+                <strong><i class="fas fa-user me-2"></i>ผู้ลงประกาศ</strong>
+                <p>${job.ผู้ลงประกาศ || '-'}</p>
+            </div>
+            <div class="job-detail-item">
+                <strong><i class="fas fa-briefcase me-2"></i>ตำแหน่งงาน</strong>
+                <p>${job.ตำแหน่งงาน || '-'}</p>
+            </div>
+            <div class="row">
+                <div class="col-md-6">
+                    <div class="job-detail-item">
+                        <strong><i class="fas fa-building me-2"></i>แผนก</strong>
+                        <p>${job.แผนก || '-'}</p>
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="job-detail-item">
+                        <strong><i class="fas fa-calendar me-2"></i>อายุ</strong>
+                        <p>${job.อายุ || '-'}</p>
+                    </div>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-md-6">
+                    <div class="job-detail-item">
+                        <strong><i class="fas fa-ruler me-2"></i>ส่วนสูง</strong>
+                        <p>${job.ส่วนสูง || '-'}</p>
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="job-detail-item">
+                        <strong><i class="fas fa-graduation-cap me-2"></i>วุฒิการศึกษา</strong>
+                        <p>${job.วุฒิการศึกษา || '-'}</p>
+                    </div>
+                </div>
+            </div>
+            <div class="job-detail-item">
+                <strong><i class="fas fa-clipboard-list me-2"></i>คุณสมบัติ</strong>
+                <p>${job.คุณสมบัติ || '-'}</p>
+            </div>
+            <div class="job-detail-item">
+                <strong><i class="fas fa-info-circle me-2"></i>อื่นๆ</strong>
+                <p>${job.อื่นๆ || '-'}</p>
+            </div>
+            <div class="row">
+                <div class="col-md-4">
+                    <div class="job-detail-item">
+                        <strong><i class="fas fa-tag me-2"></i>ประเภท</strong>
+                        <p>${job.ตำแหน่ง || '-'}</p>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="job-detail-item">
+                        <strong><i class="fas fa-users me-2"></i>จำนวน</strong>
+                        <p>${job.จำนวน || '0'} อัตรา</p>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="job-detail-item">
+                        <strong><i class="fas fa-clock me-2"></i>สถานะ</strong>
+                        <p>${getStatusBadge(job.สถานะ)}</p>
+                    </div>
+                </div>
+            </div>
+        `;
+        
+        new bootstrap.Modal(document.getElementById('detailModal')).show();
+    };
+
+    // Load data on page load
+    $(document).ready(() => {
+        loadData();
+    });
+    </script>
+</body>
+</html>
